@@ -16,7 +16,7 @@ const geojsonMarkerOptions = {
 
 function onEachFeature (feature, layer) {
   if (feature.properties && feature.properties.stop_name) {
-    layer.bindPopup(feature.properties.stop_name);
+    layer.bindPopup(`${feature.properties.stop_name}(${feature.properties.stop_id})`);
   }
 }
 
