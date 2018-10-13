@@ -14,14 +14,19 @@ const geojsonMarkerOptions = {
   fillOpacity: 0.8
 };
 
-async function getStops(url) {
+function onEachFeature (feature, layer) {
+  if (feature.properties && feature.properties.stop_name) {
+    layer.bindPopup(feature.properties.stop_name);
+  }
+}
+
+async function getStops (url) {
   const response = await fetch(url);
-  console.log(response);
   const json = await response.json();
-  console.log(json);
 
   L.geoJSON(json, {
-    pointToLayer: function (feature, latlng) {
+    onEachFeature: onEachFeature,
+    pointToLayer: (feature, latlng) => {
       return L.circleMarker(latlng, geojsonMarkerOptions);
     }
   }).addTo(mymap);
