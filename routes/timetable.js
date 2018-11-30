@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
     WHERE
       stop_id = '${stop_id}'
     LIMIT
-      100
+      10
   `
 
   db.task(async t => {
