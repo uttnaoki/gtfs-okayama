@@ -3,8 +3,10 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
+  const stop_id = req.query.stop_id;
+
   const query = `
-    select
+    SELECT
       departure_time,
       stop_headsign,
       tp.service_id,
@@ -13,14 +15,14 @@ router.get('/', (req, res, next) => {
       rt.route_long_name,
       ag.agency_name,
       rt.geom
-    from
+    FROM
       stop_times as st
       inner join trips as tp on st.trip_id = tp.trip_id
       inner join routes as rt on tp.route_id = rt.route_id
       inner join agency as ag on rt.agency_id =ag.agency_id
-    where
-      stop_id = '151_2'
-    limit
+    WHERE
+      stop_id = '${stop_id}'
+    LIMIT
       100
   `
 

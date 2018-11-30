@@ -1,3 +1,9 @@
+const getJSON = async (url) => {
+  const response = await fetch(url);
+  const json = await response.json();
+  return json;
+};
+
 const mymap = L.map('mapid').setView([34.673716, 133.923387], 15);
 
 L.tileLayer(
@@ -14,13 +20,20 @@ const geojsonMarkerOptions = {
   fillOpacity: 0.8
 };
 
-function onEachFeature (feature, layer) {
+const onEachFeature = async (feature, layer) => {
+  const spot = feature.properties;
   if (feature.properties && feature.properties.stop_name) {
-    layer.bindPopup(`${feature.properties.stop_name}(${feature.properties.stop_id})`);
+    const timetable = await getJSON(`timetable?stop_id=${spot.stop_id}`)
+    let tooltip = '';
+    for (const service of timetable) {
+      tooltip += `<div>${service.departure_time}${service.agency_name}
+        ${service.route_long_name}${service.trip_headsign}</div>`
+    }
+    layer.bindPopup(tooltip);
   }
 }
 
-async function getStops (url) {
+const getStops = async (url) => {
   const response = await fetch(url);
   const json = await response.json();
 
@@ -33,3 +46,13 @@ async function getStops (url) {
 }
 
 getStops('stops');
+
+const box = mymap.getBounds();
+const corners = [
+  [box.getWest(), box.getSouth()],
+  [box.getEast(), box.getSouth()],
+  [box.getEast(), box.getNorth()],
+  [box.getWest(), box.getNorth()]
+  ];
+// console.log(mymap.getCenter())
+console.log(corners)
