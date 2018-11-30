@@ -17,7 +17,7 @@ router.get('/', (req, res, next) => {
         )as properties,
       st_asGeoJson(geom)::json as geometry
     FROM stops
-    WHERE ST_DWithin(geom, ST_GeomFromText('POINT(133.923387 34.673716)', 4326), 1000)
+    WHERE ST_DWithin(geom, ST_GeomFromText('POINT(133.923387 34.673716)', 4326), 1000, true)
   `
   // WHEREについて
   // ST_DWithin(geom, ST_GeomFromText('POINT(lat lon)', 座標系), 範囲メートル)
