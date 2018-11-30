@@ -45,14 +45,14 @@ const getStops = async (url) => {
   }).addTo(mymap);
 }
 
-getStops('stops');
+getStops(`stops?lat=${mymap.getCenter().lat}&lng=${mymap.getCenter().lng}`);
 
-const box = mymap.getBounds();
-const corners = [
-  [box.getWest(), box.getSouth()],
-  [box.getEast(), box.getSouth()],
-  [box.getEast(), box.getNorth()],
-  [box.getWest(), box.getNorth()]
-  ];
+// const box = mymap.getBounds();
+// const corners = [
+//   [box.getWest(), box.getSouth()],
+//   [box.getEast(), box.getSouth()],
+//   [box.getEast(), box.getNorth()],
+//   [box.getWest(), box.getNorth()]
+//   ];
 // console.log(mymap.getCenter())
-console.log(corners)
+// console.log(corners)
