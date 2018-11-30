@@ -33,19 +33,28 @@ const onEachFeature = async (feature, layer) => {
   }
 }
 
+// バス停オブジェクトを保存するために宣言（バス停削除用）
+let spots;
 const getStops = async (url) => {
   const response = await fetch(url);
   const json = await response.json();
 
-  L.geoJSON(json, {
+  spots = L.geoJSON(json, {
     onEachFeature: onEachFeature,
     pointToLayer: (feature, latlng) => {
       return L.circleMarker(latlng, geojsonMarkerOptions);
     }
   }).addTo(mymap);
-}
+};
 
 getStops(`stops?lat=${mymap.getCenter().lat}&lng=${mymap.getCenter().lng}`);
+
+mymap.on('moveend', (e) => {
+  // 現在表示しているバス停のマーカーを削除
+  mymap.removeLayer(spots)
+  // 移動先の中心座標から特定の距離のバス停を表示
+  getStops(`stops?lat=${mymap.getCenter().lat}&lng=${mymap.getCenter().lng}`);
+});
 
 // const box = mymap.getBounds();
 // const corners = [
