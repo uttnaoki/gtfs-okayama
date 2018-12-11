@@ -1,4 +1,4 @@
-const mymap = L.map('mapid').setView([34.673716, 133.923387], 15);
+const mymap = L.map('mapid').setView([34.673716, 133.923387], 13);
 
 L.tileLayer(
   'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
@@ -32,4 +32,19 @@ async function getStops (url) {
   }).addTo(mymap);
 }
 
-getStops('stops');
+let dataRange = [
+  {
+    lat: 34.693716,
+    lng: 133.823387
+  },
+  {
+    lat: 34.653716,
+    lng: 133.993387
+  }
+];
+
+const dataRangeQuery = (points) => {
+  return `lat1=${points[0].lat}&lng1=${points[0].lng}&lat2=${points[1].lat}&lng2=${points[1].lng}`;
+};
+
+getStops(`stops?${dataRangeQuery(dataRange)}`);

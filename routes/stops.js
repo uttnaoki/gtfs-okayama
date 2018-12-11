@@ -3,6 +3,8 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
+  const points = req.query;
+
   const query = `
     select
       'Feature' as type,
@@ -17,11 +19,12 @@ router.get('/', (req, res, next) => {
         )as properties,
       st_asGeoJson(geom)::json as geometry
     FROM stops
-    WHERE ST_DWithin(geom, ST_GeomFromText('POINT(133.923387 34.673716)', 4326), 1000, true)
-  `
-  // WHEREについて
-  // ST_DWithin(geom, ST_GeomFromText('POINT(lat lon)', 座標系), 範囲メートル)
-
+    WHERE
+    	ST_Intersects(
+        ST_SetSRID(Box2D(ST_GeomFromText('LINESTRING(${points.lng1} ${points.lat1}, ${points.lng2} ${points.lat2})')), 4326),
+        geom
+        )
+    `
   db.task(async t => {
     const rtn = await t.any(query);
     res.json(rtn);
