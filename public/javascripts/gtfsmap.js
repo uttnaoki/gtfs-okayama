@@ -30,7 +30,18 @@ const THRESHOLD256 = [
   { value: 256, color: 'rgba(255, 0, 66, 0.5)' },
 ];
 
+const getMapCorners = async () => {
+  const box = await map.getBounds();
+  return [
+    [box.getWest(), box.getSouth()],
+    [box.getEast(), box.getSouth()],
+    [box.getEast(), box.getNorth()],
+    [box.getWest(), box.getNorth()]
+  ];
+};
+
 async function renderMesh (url) {
+  console.log(url)
   const response = await fetch(url);
   const json = await response.json();
 
@@ -46,7 +57,6 @@ async function renderMesh (url) {
       if (pop >= THRESHOLD256[level].value) popLevel = level;
     }
 
-    console.log(popLevel, pop)
     L.geoJSON(mesh, {
       // onEachFeature: onEachFeature,
       style: (feature) => {
@@ -75,8 +85,9 @@ let dataRange = [
   }
 ];
 
-const dataRangeQuery = (points) => {
-  return `lat1=${points[0].lat}&lng1=${points[0].lng}&lat2=${points[1].lat}&lng2=${points[1].lng}`;
-};
-console.log(dataRangeQuery(dataRange));
-renderMesh(`mesh?${dataRangeQuery(dataRange)}`);
+getMapCorners().then((mapCorners) => {
+  const dataRangeQuery = (points) => {
+    return `lat1=${mapCorners[2][1]}&lng1=${mapCorners[2][0]}&lat2=${mapCorners[0][1]}&lng2=${mapCorners[0][0]}`;
+  };
+  renderMesh(`mesh?${dataRangeQuery(dataRange)}`);
+})

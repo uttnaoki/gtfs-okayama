@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
   let points = dataRange;
 
   // クエリがあればそれを使う
-  if (req.query.length) {
+  if (Object.keys(req.query).length) {
     points = req.query;
   }
 
