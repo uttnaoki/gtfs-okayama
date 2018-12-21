@@ -34,30 +34,31 @@ async function renderMesh (url) {
   const response = await fetch(url);
   const json = await response.json();
 
-  // console.log(json)
-  // console.log(json[0].st_asgeojson)
   for (const meshZip of json) {
+    // GeoJsonのデータ
     const mesh = JSON.parse(meshZip.st_asgeojson);
+    // ヒートマップに使う値
     const pop = meshZip.population;
-    let color;
-    if (pop > 100) {
-      color = THRESHOLD256[2].color;
-    } 
-    else {
-      color = THRESHOLD256[4].color;
+
+    // 値を基にヒートレベルを設定
+    let popLevel = 0;
+    for (const level in THRESHOLD256) {
+      if (pop >= THRESHOLD256[level].value) popLevel = level;
     }
+
+    console.log(popLevel, pop)
     L.geoJSON(mesh, {
       // onEachFeature: onEachFeature,
-      style: function (feature) {
+      style: (feature) => {
         return { 
-      stroke: false,
-      color: "#000",
-      fillColor: color,
-      weight: 2,
-      fillOpacity: 1
+          stroke: false,
+          color: "#000",
+          fillColor: THRESHOLD256[popLevel].color,
+          weight: 2,
+          fillOpacity: 1
         };
       }
-    }).bindPopup(function (layer) {
+    }).bindPopup((layer) => {
       return '<h1>hello</h1>';
     }).addTo(map);
   }
