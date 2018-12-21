@@ -14,18 +14,18 @@ const geojsonMarkerOptions = {
   fillOpacity: 0.8
 };
 
-// function onEachFeature (feature, layer) {
-//   if (feature.properties && feature.properties.stop_name) {
-//     layer.bindPopup(`${feature.properties.stop_name}(${feature.properties.stop_id})`);
-//   }
-// }
+function onEachFeature (feature, layer) {
+  if (feature.properties && feature.properties.stop_name) {
+    layer.bindPopup(`${feature.properties.stop_name}(${feature.properties.stop_id})`);
+  }
+}
 
-async function renderMesh (url) {
+async function getStops (url) {
   const response = await fetch(url);
   const json = await response.json();
 
   L.geoJSON(json, {
-    // onEachFeature: onEachFeature,
+    onEachFeature: onEachFeature,
     pointToLayer: (feature, latlng) => {
       return L.circleMarker(latlng, geojsonMarkerOptions);
     }
@@ -46,5 +46,5 @@ let dataRange = [
 const dataRangeQuery = (points) => {
   return `lat1=${points[0].lat}&lng1=${points[0].lng}&lat2=${points[1].lat}&lng2=${points[1].lng}`;
 };
-console.log(dataRangeQuery(dataRange));
-renderMesh(`mesh?${dataRangeQuery(dataRange)}`);
+
+getStops(`stops?${dataRangeQuery(dataRange)}`);
