@@ -18,7 +18,8 @@ router.get('/', (req, res, next) => {
 
   const query = `
     SELECT
-      *
+      pop2020 AS population,
+      ST_AsGeoJSON(geom)
     FROM
       t1
     WHERE
