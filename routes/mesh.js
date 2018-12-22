@@ -21,7 +21,7 @@ router.get('/', (req, res, next) => {
       pop2020 AS population,
       ST_AsGeoJSON(geom)
     FROM
-      t1
+      mesh
     WHERE
       ST_Intersects(
         ST_SetSRID(Box2D(ST_GeomFromText('LINESTRING(${points.lng1} ${points.lat1}, ${points.lng2} ${points.lat2})')), 4326),

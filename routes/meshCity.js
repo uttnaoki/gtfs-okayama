@@ -18,13 +18,13 @@ router.get('/', (req, res, next) => {
 
   const query = `
     SELECT
-      t1.pop2020 AS population,
-      ST_AsGeoJSON(t1.geom)
+      mesh.pop2020 AS population,
+      ST_AsGeoJSON(mesh.geom)
     FROM
-      t1 as t1,
+      mesh as mesh,
       (select * from okayama
       where n03_007 = '33202') as kurashiki
-    WHERE ST_Within(t1.geom, kurashiki.geom);
+    WHERE ST_Within(mesh.geom, kurashiki.geom);
     `
   db.task(async t => {
     const rtn = await t.any(query);
