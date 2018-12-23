@@ -86,9 +86,5 @@ let dataRange = [
 ];
 
 getMapCorners().then((mapCorners) => {
-  // const dataRangeQuery = (points) => {
-  //   return `lat1=${mapCorners[2][1]}&lng1=${mapCorners[2][0]}&lat2=${mapCorners[0][1]}&lng2=${mapCorners[0][0]}`;
-  // };
-  // renderMesh(`mesh?${dataRangeQuery(dataRange)}`);
-  renderMesh(`meshCity`);
+  renderMesh(`meshCity?cityCodes[]=33202&cityCodes[]=33204`);
 })

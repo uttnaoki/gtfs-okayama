@@ -3,10 +3,11 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
-  // 以下3行で
+  const cityCodes = ('cityCodes' in req.query) ? req.query.cityCodes : ['33202'];
+
+  // 以下2行で
   // n03_007 = '33202' OR n03_007 = '33203'
   // といった市区町村コードのフィルター(WHERE文)を作成する
-  const cityCodes = ['33202', '33203', '33204'];
   const filter4city_list = cityCodes.map((d) => { return `n03_007 = '${d}'`; });
   const filter4city = filter4city_list.join(' OR ');
 
