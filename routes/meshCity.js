@@ -3,18 +3,12 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
-  // const dataRange = {
-  //   lat1: 34.693716,
-  //   lng1: 133.823387,
-  //   lat2: 34.653716,
-  //   lng2: 133.993387
-  // };
-  // let points = dataRange;
-
-  // // クエリがあればそれを使う
-  // if (Object.keys(req.query).length) {
-  //   points = req.query;
-  // }
+  // 以下3行で
+  // n03_007 = '33202' OR n03_007 = '33203'
+  // といった市区町村コードのフィルター(WHERE文)を作成する
+  const cityCodes = ['33202', '33203', '33204'];
+  const filter4city_list = cityCodes.map((d) => { return `n03_007 = '${d}'`; });
+  const filter4city = filter4city_list.join(' OR ');
 
   const query = `
     SELECT
@@ -22,9 +16,11 @@ router.get('/', (req, res, next) => {
       ST_AsGeoJSON(mesh.geom)
     FROM
       mesh as mesh,
-      (select * from okayama
-      where n03_007 = '33202') as kurashiki
-    WHERE ST_Within(mesh.geom, kurashiki.geom);
+      (
+        SELECT * FROM okayama
+        WHERE ${filter4city}
+        ) AS kurashiki
+        WHERE ST_Within(mesh.geom, kurashiki.geom);
     `
   db.task(async t => {
     const rtn = await t.any(query);
