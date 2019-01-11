@@ -41,7 +41,6 @@ const getMapCorners = async () => {
 };
 
 async function renderMesh (url) {
-  console.log(url)
   const response = await fetch(url);
   const json = await response.json();
 
@@ -85,6 +84,13 @@ let dataRange = [
   }
 ];
 
+let queryStr4API = '';
+for (const cc of param4API.cityCode) {
+  queryStr4API += `cityCodes[]=${cc}&`;
+}
+// 末尾の & を削除
+queryStr4API = queryStr4API.slice(0, -1);
+
 getMapCorners().then((mapCorners) => {
-  renderMesh(`meshCity?cityCodes[]=33202&cityCodes[]=33204`);
+  renderMesh(`meshCity?${queryStr4API}`);
 })
