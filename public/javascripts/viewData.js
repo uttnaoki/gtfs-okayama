@@ -1,4 +1,4 @@
-const map = L.map('mapid').setView([34.673716, 133.923387], 13);
+const map = L.map('mapid').setView([34.673716, 133.923387], 11);
 
 L.tileLayer(
   'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
