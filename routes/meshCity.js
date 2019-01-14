@@ -8,13 +8,28 @@ router.get('/', (req, res, next) => {
   // 以下2行で
   // n03_007 = '33202' OR n03_007 = '33203'
   // といった市区町村コードのフィルター(WHERE文)を作成する
-  const filter4city_list = cityCodes.map((d) => { return `n03_007 = '${d}'`; });
-  const filter4city = filter4city_list.join(' OR ');
+  const filter4cityList = cityCodes.map((d) => { return `n03_007 = '${d}'`; });
+  const filter4city = filter4cityList.join(' OR ');
+
+  /** 
+   * 人工データのみを送るか，人工データとgeomのセットを送るかを分類するSELECT文を作成する．
+   * クエリにyearがある場合，二回目以降のGETと見なし，人工データのみを送る．
+   * クエリにyearがない場合，一回目のGETと見なし，初期年次の人工データとgeomのセットを送る．
+  */
+  let selectQuery = '';
+  if ('year' in req.query) { // 二回目以降のGETと判断する．geomを除いた人工データのみを送る．
+    const year = req.query.year; // TODO: 値のチェック
+    selectQuery = `mesh.pop${year} AS population`
+  } else { // 一回目のGETと判断する．人工データとgeomのセットを送る．
+    selectQuery = `
+      mesh.pop2020 AS population,
+      ST_AsGeoJSON(mesh.geom)
+    `;
+  }
 
   const query = `
     SELECT
-      mesh.pop2020 AS population,
-      ST_AsGeoJSON(mesh.geom)
+      ${selectQuery}
     FROM
       mesh as mesh,
       (
