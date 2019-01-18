@@ -40,8 +40,8 @@ router.get('/', (req, res, next) => {
       (
         SELECT * FROM okayama
         WHERE ${filter4city}
-        ) AS kurashiki
-        WHERE ST_Within(mesh.geom, kurashiki.geom);
+        ) AS targetCity
+        WHERE ST_Within(mesh.geom, targetCity.geom);
     `
   db.task(async t => {
     const rtn = await t.any(query);
