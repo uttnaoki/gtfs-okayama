@@ -24,7 +24,11 @@ router.get('/', (req, res, next) => {
     if (!(year in [2010, 2020, 2025, 2030, 2035, 2040])) { 
       year = 2020;
     }
-    selectQuery = `mesh.pop${year} AS population`
+    // selectQuery = `mesh.pop${year} AS population`
+    selectQuery = `
+      mesh.pop${year} AS population,
+      ST_AsGeoJSON(mesh.geom)
+    `
   } else { // 一回目のGETと判断する．人工データとgeomのセットを送る．
     selectQuery = `
       mesh.pop2020 AS population,
