@@ -18,7 +18,12 @@ router.get('/', (req, res, next) => {
   */
   let selectQuery = '';
   if ('year' in req.query) { // 二回目以降のGETと判断する．geomを除いた人工データのみを送る．
-    const year = req.query.year; // TODO: 値のチェック
+    let year = parseInt(req.query.year);
+    // TODO: yearのバリデーション
+    // とりあえず，この中の数字じゃなかったら2020に固定
+    if (!(year in [2010, 2020, 2025, 2030, 2035, 2040])) { 
+      year = 2020;
+    }
     selectQuery = `mesh.pop${year} AS population`
   } else { // 一回目のGETと判断する．人工データとgeomのセットを送る．
     selectQuery = `
