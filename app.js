@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var meshRouter = require('./routes/mesh');
 var meshCityRouter = require('./routes/meshCity');
+var markersRouter = require('./routes/markers');
 
 var cors = require('cors');
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/mesh', meshRouter);
 app.use('/meshCity', meshCityRouter);
+app.use('/markers', markersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
