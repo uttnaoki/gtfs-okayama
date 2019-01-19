@@ -16,36 +16,28 @@ router.get('/', (req, res, next) => {
    * クエリにyearがある場合，二回目以降のGETと見なし，人工データのみを送る．
    * クエリにyearがない場合，一回目のGETと見なし，初期年次の人工データとgeomのセットを送る．
   */
-  let selectQuery = '';
+  let year = 2015;
   if ('year' in req.query) { // 二回目以降のGETと判断する．geomを除いた人工データのみを送る．
-    let year = parseInt(req.query.year);
-    // TODO: yearのバリデーション
-    // とりあえず，この中の数字じゃなかったら2020に固定
-    if (!(year in [2010, 2020, 2025, 2030, 2035, 2040])) { 
-      year = 2020;
+    year = parseInt(req.query.year);
+
+    // yearのバリデーション
+    if (isNaN(year) || year < 2015 || 2040 < year) {
+      year = 2015;
     }
-    // selectQuery = `mesh.pop${year} AS population`
-    selectQuery = `
-      mesh.pop${year} AS population,
-      ST_AsGeoJSON(mesh.geom)
-    `
-  } else { // 一回目のGETと判断する．人工データとgeomのセットを送る．
-    selectQuery = `
-      mesh.pop2020 AS population,
-      ST_AsGeoJSON(mesh.geom)
-    `;
   }
 
+  // ${selectQuery}
   const query = `
     SELECT
-      ${selectQuery}
+      mesh.population,
+      ST_AsGeoJSON(mesh.geom)
     FROM
-      mesh as mesh,
+      mesh_from_csv as mesh,
       (
         SELECT * FROM okayama
         WHERE ${filter4city}
         ) AS targetCity
-        WHERE ST_Within(mesh.geom, targetCity.geom);
+        WHERE ST_Within(mesh.geom, targetCity.geom) AND mesh.year = '${year}';
     `
   db.task(async t => {
     const rtn = await t.any(query);
