@@ -29,15 +29,15 @@ router.get('/', (req, res, next) => {
   // ${selectQuery}
   const query = `
     SELECT
-      mesh.population,
-      ST_AsGeoJSON(mesh.geom)
+      pop.population,
+      ST_AsGeoJSON(pop.geom)
     FROM
-      mesh_from_csv as mesh,
+      population as pop,
       (
         SELECT * FROM okayama
         WHERE ${filter4city}
         ) AS targetCity
-        WHERE ST_Within(mesh.geom, targetCity.geom) AND mesh.year = '${year}';
+        WHERE ST_Within(pop.geom, targetCity.geom) AND pop.year = '${year}';
     `
   db.task(async t => {
     const rtn = await t.any(query);
